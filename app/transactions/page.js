@@ -1,8 +1,10 @@
+import { TransactionCard } from "../components";
+
 export default function Transactions(){
 
   return(
-    <div>
-      Hello Transactions
+    <div className="bg-background flex-1 flex">
+      <TransactionCard/>
     </div>
   )
 }

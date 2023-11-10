@@ -1,6 +1,6 @@
-import { AccountBalance, AccountBalanceWallet, AttachMoney, CreditCard } from '@mui/icons-material'
 import './globals.css'
-import { IconButton } from '@mui/material'
+import { Header, Footer } from './components'
+
 
 export const metadata = {
   title: 'Create Next App',
@@ -10,24 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className='min-h-[100vh] flex flex-col'>
-        <header className='py-4 flex justify-center bg-blue-300'>
-          <div className='font-semibold text-xl'>Budget App</div>
-        </header>
-        <main className='flex-1'>
-          {children}
-        </main>
-        <footer className='bg-blue-300 flex justify-between px-16 py-2 text-xl'>
-          <IconButton>
-            <AttachMoney fontSize='large'/>
-          </IconButton>
-          <IconButton>
-            <AccountBalanceWallet fontSize='large'/>
-          </IconButton>
-          <IconButton>
-            <CreditCard fontSize='large'/>
-          </IconButton>
-        </footer>        
+      <body className='min-h-screen flex flex-col'>
+        <Header/>
+          <main className='flex-1 flex flex-col my-20'>
+            {children}
+          </main>
+        <Footer/>  
       </body>
     </html>
   )
