@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 import { useState } from 'react'
-import { AccountBalanceWallet, AttachMoney, CreditCard } from '@mui/icons-material'
-import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput } from '@mui/material'
+import { AccountBalanceWallet, AttachMoney, Close, CreditCard } from '@mui/icons-material'
+import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput, Button } from '@mui/material'
 import Link from 'next/link'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -10,7 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export function Header(){
   return(
-    <header className='fixed bg-main w-full top-0 h-20 shadow-lg'>
+    <header className='fixed bg-main w-full top-0 h-20 shadow-lg z-40'>
       <div className='flex justify-center items-center h-full'>
         <Link href="/">
           <div className='font-semibold text-2xl text-contrast'>Budget App</div>
@@ -23,16 +23,16 @@ export function Header(){
 
 export function Footer(){
   return(
-    <footer className='bg-main fixed w-full bottom-0 h-20 px-16 shadow-lg'>
+    <footer className='bg-main fixed w-full bottom-0 h-20 px-16 shadow-lg z-40'>
       <div className='flex justify-between items-center h-full'>
         <Link href='transactions'>
-          <IconButton className='text-contrast'>
+          <IconButton className='text-contrast' color='inherit'>
             <AttachMoney fontSize='large'/>
           </IconButton>
         </Link>
         <Link href='budgets'>
           <IconButton className='text-contrast'>
-            <AccountBalanceWallet fontSize='large'/>
+            <AccountBalanceWallet fontSize='large' color='inherit'/>
           </IconButton>
         </Link>
         <Link href='cards'>
@@ -119,7 +119,7 @@ export function AmountQuestion({value, setValue, children}){
 }
 
 
-export function TransactionCard(){
+export function TransactionCard({handleClose}){
   const [card, setCard] = useState("")
   const cardMenu = ['Discover', 'Master Card', 'Visa']
   const [category, setCategory] = useState("")
@@ -129,7 +129,13 @@ export function TransactionCard(){
   const [amount, setAmount] = useState("")
   return(
     <div className="bg-contrast m-6 rounded-xl flex-1 flex flex-col shadow-lg">
-      <div className='h-10 rounded-t-xl bg-main'></div>
+      <div className='h-10 rounded-t-xl bg-main relative'>
+        <div className='absolute right-1'>
+          <IconButton onClick={handleClose} className='text-contrast'>
+            <Close/>
+          </IconButton>
+        </div>
+      </div>
       <div className='bg-main-2 mx-2 mt-2 rounded-xl p-2 flex justify-center items-center'>
         <H3>Details</H3>
       </div>
@@ -147,6 +153,9 @@ export function TransactionCard(){
       </div>
       <div className='p-2'>
         <AmountQuestion></AmountQuestion>
+      </div>
+      <div className='p-2 flex justify-center'>
+        <Button variant='contained' className='bg-main text-contrast' onClick={handleClose}>Submit</Button>
       </div>
     </div>
   )
