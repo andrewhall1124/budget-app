@@ -1,7 +1,6 @@
-import { Inter } from 'next/font/google'
+import { AccountBalance, AccountBalanceWallet, AttachMoney, CreditCard } from '@mui/icons-material'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import { IconButton } from '@mui/material'
 
 export const metadata = {
   title: 'Create Next App',
@@ -11,7 +10,25 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className='min-h-[100vh] flex flex-col'>
+        <header className='py-4 flex justify-center bg-blue-300'>
+          <div className='font-semibold text-xl'>Budget App</div>
+        </header>
+        <main className='flex-1'>
+          {children}
+        </main>
+        <footer className='bg-blue-300 flex justify-between px-16 py-2 text-xl'>
+          <IconButton>
+            <AttachMoney fontSize='large'/>
+          </IconButton>
+          <IconButton>
+            <AccountBalanceWallet fontSize='large'/>
+          </IconButton>
+          <IconButton>
+            <CreditCard fontSize='large'/>
+          </IconButton>
+        </footer>        
+      </body>
     </html>
   )
 }
