@@ -1,6 +1,6 @@
 import './globals.css'
 import { Header, Footer } from './components'
-
+import Head from 'next/head';
 
 export const metadata = {
   title: 'Create Next App',
@@ -10,6 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <Head>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
+      </Head>
       <body className='min-h-screen flex flex-col'>
         <Header/>
           <main className='flex-1 flex flex-col my-20'>
