@@ -75,7 +75,7 @@ export function Card({children, header, handleClose}){
           </div>
         </div>
       }
-      <div className='flex flex-col gap-4 px-4 pt-2 pb-4'>
+      <div className='flex flex-col gap-4 px-4 py-4'>
         {children}
       </div>
     </div>
@@ -157,7 +157,6 @@ export function TransactionCard({handleClose}){
   const [amount, setAmount] = useState("")
   return(
     <Card header={true} handleClose={handleClose}>
-      <CardTitle>Details</CardTitle>
       <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
       <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
       <DateQuestion value={date} setValue={setDate}/>
