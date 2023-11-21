@@ -23,9 +23,9 @@ export function Header(){
 
 export function Footer(){
   return(
-    <footer className='bg-main fixed w-full bottom-0 h-20 px-16 shadow-lg z-40'>
+    <footer className='bg-main fixed w-full bottom-0 h-28 px-16 shadow-lg z-40 pb-8'>
       <div className='flex justify-between items-center h-full'>
-        <Link href='transactions'>
+        <Link href='/'>
           <IconButton className='text-contrast' color='inherit'>
             <AttachMoney fontSize='large'/>
           </IconButton>
@@ -59,6 +59,25 @@ export function H3({children}){
   return(
     <div className='text-lg text-contrast'>
       {children}
+    </div>
+  )
+}
+
+export function Card({children, header, handleClose}){
+  return(
+    <div className="bg-contrast m-4 rounded-xl flex-1 flex flex-col shadow-lg">
+      {header &&
+        <div className='h-10 rounded-t-xl bg-main relative'>
+          <div className='absolute right-1'>
+            <IconButton onClick={handleClose} className='text-contrast'>
+              <Close/>
+            </IconButton>
+          </div>
+        </div>
+      }
+      <div className='flex flex-col gap-4 px-4 pt-2 pb-4'>
+        {children}
+      </div>
     </div>
   )
 }
@@ -118,6 +137,15 @@ export function AmountQuestion({value, setValue, children}){
   )
 }
 
+export function CardTitle({children}){
+
+  return(
+    <div className='bg-main-2 mt-2 rounded-xl p-2 flex justify-center items-center'>
+      <H3>{children}</H3>
+    </div>
+  )
+}
+
 
 export function TransactionCard({handleClose}){
   const [card, setCard] = useState("")
@@ -128,35 +156,16 @@ export function TransactionCard({handleClose}){
   const [notes, setNotes] = useState("")
   const [amount, setAmount] = useState("")
   return(
-    <div className="bg-contrast m-6 rounded-xl flex-1 flex flex-col shadow-lg">
-      <div className='h-10 rounded-t-xl bg-main relative'>
-        <div className='absolute right-1'>
-          <IconButton onClick={handleClose} className='text-contrast'>
-            <Close/>
-          </IconButton>
-        </div>
-      </div>
-      <div className='bg-main-2 mx-2 mt-2 rounded-xl p-2 flex justify-center items-center'>
-        <H3>Details</H3>
-      </div>
-      <div className='p-2'>
-        <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
-      </div>
-      <div className='p-2'>
-        <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
-      </div>
-      <div className='p-2'>
-        <DateQuestion value={date} setValue={setDate}/>
-      </div>
-      <div className='p-2'>
-        <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
-      </div>
-      <div className='p-2'>
-        <AmountQuestion></AmountQuestion>
-      </div>
-      <div className='p-2 flex justify-center'>
+    <Card header={true} handleClose={handleClose}>
+      <CardTitle>Details</CardTitle>
+      <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
+      <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
+      <DateQuestion value={date} setValue={setDate}/>
+      <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
+      <AmountQuestion></AmountQuestion>
+      <div className='flex justify-center'>
         <Button variant='contained' className='bg-main text-contrast' onClick={handleClose}>Submit</Button>
       </div>
-    </div>
+    </Card>
   )
 }
