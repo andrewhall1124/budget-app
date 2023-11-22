@@ -1,21 +1,28 @@
 'use client'
-import { TransactionCard } from "./components";
+import { Card, CardTitle, TransactionCard, SelectQuestion } from "./components";
 import { Fab } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 
 function Transaction(){
   return(
-    <div className="flex justify-between border-t py-2">
+    <div className="flex justify-between items-center">
       <div>
         <div className="font-semibold text-main">Groceries</div>
         <div className="italic">Walmart Run</div>
       </div>
-      <div>
-        <div>$100.57</div>
-        <div className="italic">11/08/23</div>
+      <div className="bg-red font-semibold text-white p-2 text-sm rounded-xl">
+        -100.57
       </div>
-      {/* <div>Master Card</div> */}
+    </div>
+  )
+}
+
+function Date(){
+
+  return(
+    <div className="text-white bg-background rounded-xl p-2 font-semibold text-center">
+      November 24th 2000
     </div>
   )
 }
@@ -27,29 +34,51 @@ export default function Home(){
     setCardClosed(true)
   }
 
+  const [month, setMonth] = useState('November')
+  const monthMenu = [
+    'September',
+    'October',
+    'November'
+  ]
+
+  const buttonGroup = [
+    'Income',
+    'Expenses',
+    'Transfers'
+  ]
+
+  const [selectedGroup, setSelectedGroup] = useState("Expenses");
+
   return(
     <div className="relative bg-background flex-1 ">
       <div className="flex">
         {cardClosed ?
-          <div className="bg-contrast rounded-lg w-full m-4 p-4 flex-1">
-            <div className="text-lg pb-2">Recent Transactions</div>
+          <div className="flex flex-col w-full">
+          <Card>
+            <CardTitle>Transactions</CardTitle>
+            <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>Month</SelectQuestion>
+            <div className="flex w-full border-main-2 border-y-4 border-x-2">
+              {buttonGroup.map((button, index)=>(
+                <button key={index} 
+                  className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
+                  onClick={()=>setSelectedGroup(button)}>
+                  {button}
+                </button>
+              ))}
+            </div>
+          </Card>
+          <Card>
+            <Date/>
             <Transaction/>
             <Transaction/>
+            <Date/>
             <Transaction/>
+          </Card>
           </div>
           :
           <TransactionCard handleClose={handleCardClose}/>
         }
       </div>
-      {cardClosed &&
-        <div className="absolute bottom-12 right-4">
-          <Fab className="bg-main" onClick={() =>setCardClosed(false)}>
-            <div className="text-contrast">
-              <Add />
-            </div>
-          </Fab> 
-        </div>
-      }
     </div>
   )
 }

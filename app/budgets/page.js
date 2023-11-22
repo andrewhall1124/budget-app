@@ -35,7 +35,7 @@ export default function Budgets(){
     'Remaining'
   ]
 
-  const [selectedGroup, setSelectedGroup] = useState("Planned");
+  const [selectedGroup, setSelectedGroup] = useState("Spent");
 
   return(
     <div>
