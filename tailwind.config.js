@@ -12,9 +12,11 @@ module.exports = {
         'main-2': '#00b4d8',
         'contrast': '#FFFFFF',
         'background': '#ade8f4',
-        'green': '#00c500',
-        'red': '#ff2c2c',
-        'grey': '#8e918f'
+        'light-green': '#56d156',
+        'dark-green': '#008000',
+        'light-red': '#fa5e52',
+        'dark-red': '#a60c00',
+        'grey': '#c2c2c2'
       },
     },
   },

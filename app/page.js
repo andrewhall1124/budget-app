@@ -11,7 +11,7 @@ function Transaction(){
         <div className="font-semibold text-main">Groceries</div>
         <div className="italic">Walmart Run</div>
       </div>
-      <div className="bg-red font-semibold text-white p-2 text-sm rounded-xl">
+      <div className="bg-light-green font-semibold text-dark-green p-2 text-sm rounded-xl">
         -100.57
       </div>
     </div>
@@ -21,7 +21,7 @@ function Transaction(){
 function Date(){
 
   return(
-    <div className="text-white bg-background rounded-xl p-2 font-semibold text-center">
+    <div className="text-white bg-grey rounded-xl p-2 font-semibold text-center">
       November 24th 2000
     </div>
   )
