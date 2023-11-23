@@ -1,7 +1,29 @@
 'use client'
-import { Card, CardTitle, TransactionCard, SelectQuestion, Button } from "./components";
-import { Add } from "@mui/icons-material";
+import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button } from "./components";
 import { useState } from "react";
+
+function TransactionCard({handleClose}){
+  const [card, setCard] = useState("")
+  const cardMenu = ['Discover', 'Master Card', 'Visa']
+  const [category, setCategory] = useState("")
+  const categoryMenu = ['Gas', 'Groceries', 'Restaurants']
+  const [date, setDate] = useState();
+  const [notes, setNotes] = useState("")
+  const [amount, setAmount] = useState("")
+  return(
+    <Card header={true} handleClose={handleClose}>
+      <CardTitle>New Transaction</CardTitle>
+      <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
+      <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
+      <DateQuestion value={date} setValue={setDate}/>
+      <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
+      <AmountQuestion></AmountQuestion>
+      <div className='flex justify-center'>
+        <Button variant='contained' className='bg-main text-contrast' onClick={handleClose}>Submit</Button>
+      </div>
+    </Card>
+  )
+}
 
 function Transaction(){
   return(
@@ -45,38 +67,38 @@ export default function Home(){
   const [selectedGroup, setSelectedGroup] = useState("Expenses");
 
   return(
-    <div className="relative bg-background flex-1 ">
-      <div className="flex">
-        {cardClosed ?
-          <div className="flex flex-col w-full">
-          <Card>
-            <CardTitle>Transactions</CardTitle>
-            <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>Month</SelectQuestion>
-            <div className="flex w-full border-main-2 border-y-4 border-x-2">
-              {buttonGroup.map((button, index)=>(
-                <button key={index} 
-                  className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
-                  onClick={()=>setSelectedGroup(button)}>
-                  {button}
-                </button>
-              ))}
+    <>
+      <Header openAdd={() => setCardClosed(false)}/>
+      <div className="relative bg-background flex-1 mt-12">
+        <div className="flex">
+          {cardClosed ?
+            <div className="flex flex-col w-full">
+            <Card>
+              <CardTitle>Transactions</CardTitle>
+              <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>Month</SelectQuestion>
+              <div className="flex w-full border-main-2 border-y-4 border-x-2">
+                {buttonGroup.map((button, index)=>(
+                  <button key={index} 
+                    className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
+                    onClick={()=>setSelectedGroup(button)}>
+                    {button}
+                  </button>
+                ))}
+              </div>
+            </Card>
+            <Card>
+              <Date/>
+              <Transaction/>
+              <Transaction/>
+              <Date/>
+              <Transaction/>
+            </Card>
             </div>
-          </Card>
-          <div className="px-4 w-full flex justify-center">
-            <Button variant="contained" onClick={() =>setCardClosed(false)}>Add New</Button>
-          </div>
-          <Card>
-            <Date/>
-            <Transaction/>
-            <Transaction/>
-            <Date/>
-            <Transaction/>
-          </Card>
-          </div>
-          :
-          <TransactionCard handleClose={() => setCardClosed(true)}/>
-        }
+            :
+            <TransactionCard handleClose={() => setCardClosed(true)}/>
+          }
+        </div>
       </div>
-    </div>
+    </>
   )
 }

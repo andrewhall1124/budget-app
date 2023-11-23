@@ -8,14 +8,18 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-export function Header(){
+export function Header({openAdd, openAccount}){
   return(
-    <header className='fixed bg-background w-full top-0 h-12 z-40'>
+    <div className='fixed bg-background w-full top-0 h-12 z-40'>
       <div className='flex justify-end items-center gap-2 h-full px-4'>
-        <Add sx={{color: 'white'}} fontSize='large'/>
-        <AccountCircle sx={{color: 'white'}} fontSize='large'/>
+        <IconButton onClick={openAdd}>
+          <Add sx={{color: 'white'}} fontSize='large'/>
+        </IconButton>
+        <IconButton onClick={openAccount}>
+          <AccountCircle sx={{color: 'white'}} fontSize='large'/>
+        </IconButton>
       </div>
-    </header>
+    </div>
   )
 }
 
@@ -154,24 +158,3 @@ export function CardTitle({children}){
 }
 
 
-export function TransactionCard({handleClose}){
-  const [card, setCard] = useState("")
-  const cardMenu = ['Discover', 'Master Card', 'Visa']
-  const [category, setCategory] = useState("")
-  const categoryMenu = ['Gas', 'Groceries', 'Restaurants']
-  const [date, setDate] = useState();
-  const [notes, setNotes] = useState("")
-  const [amount, setAmount] = useState("")
-  return(
-    <Card header={true} handleClose={handleClose}>
-      <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
-      <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
-      <DateQuestion value={date} setValue={setDate}/>
-      <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
-      <AmountQuestion></AmountQuestion>
-      <div className='flex justify-center'>
-        <Button variant='contained' className='bg-main text-contrast' onClick={handleClose}>Submit</Button>
-      </div>
-    </Card>
-  )
-}
