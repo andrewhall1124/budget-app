@@ -1,7 +1,7 @@
 'use client'
 import React from "react"
 import { useState } from "react"
-import { SelectQuestion, Card, CardTitle } from "../components"
+import { SelectQuestion, Card, CardTitle, Button } from "../components"
 
 export default function Budgets(){
   const [month, setMonth] = useState('November')
@@ -52,6 +52,7 @@ export default function Budgets(){
           ))}
         </div>
       </Card>
+
       {budget.map((budget, index) =>(
           <Card key={index}>
             <div className="flex justify-between items-center">
@@ -70,6 +71,9 @@ export default function Budgets(){
             </div>
           </Card>
         ))}
+        <div className="px-4 w-full flex justify-center">
+          <Button variant="contained">Add New</Button>
+        </div>
     </div>
   )
 }

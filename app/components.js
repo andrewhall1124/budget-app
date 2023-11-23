@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 import { useState } from 'react'
-import { AccountBalanceWallet, AttachMoney, Close, CreditCard } from '@mui/icons-material'
-import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput, Button } from '@mui/material'
+import { AccountBalanceWallet, AttachMoney, Close, CreditCard, Add, AccountCircle } from '@mui/icons-material'
+import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput } from '@mui/material'
 import Link from 'next/link'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -10,13 +10,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export function Header(){
   return(
-    <header className='fixed bg-main w-full top-0 h-20 shadow-lg z-40'>
-      <div className='flex justify-center items-center h-full'>
-        <Link href="/">
-          <div className='font-semibold text-2xl text-contrast'>Budget App</div>
-        </Link>
+    <header className='fixed bg-background w-full top-0 h-12 z-40'>
+      <div className='flex justify-end items-center gap-2 h-full px-4'>
+        <Add sx={{color: 'white'}} fontSize='large'/>
+        <AccountCircle sx={{color: 'white'}} fontSize='large'/>
       </div>
-
     </header>
   )
 }
@@ -26,18 +24,18 @@ export function Footer(){
     <footer className='bg-main fixed w-full bottom-0 h-28 px-16 shadow-lg z-40 pb-8'>
       <div className='flex justify-between items-center h-full'>
         <Link href='/'>
-          <IconButton className='text-contrast' color='inherit'>
-            <AttachMoney fontSize='large'/>
+          <IconButton>
+            <AttachMoney fontSize='large' sx={{color:"white"}}/>
           </IconButton>
         </Link>
         <Link href='budgets'>
-          <IconButton className='text-contrast'>
-            <AccountBalanceWallet fontSize='large' color='inherit'/>
+          <IconButton>
+            <AccountBalanceWallet fontSize='large' sx={{color:"white"}}/>
           </IconButton>
         </Link>
         <Link href='cards'>
-          <IconButton className='text-contrast'>
-            <CreditCard fontSize='large'/>
+          <IconButton>
+            <CreditCard fontSize='large' sx={{color:"white"}}/>
           </IconButton>
         </Link>
       </div>
@@ -134,6 +132,15 @@ export function AmountQuestion({value, setValue, children}){
         label="Amount"
       />
   </FormControl>
+  )
+}
+
+export function Button({children, onClick}){
+
+  return(
+    <button onClick={() => onClick()} className='bg-main text-contrast py-2 px-4 rounded-xl w-fit font-semibold '>
+      {children}
+    </button>
   )
 }
 

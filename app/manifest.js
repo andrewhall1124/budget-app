@@ -5,7 +5,7 @@ export default function manifest() {
     description: 'Budget App made by Andrew Hall',
     start_url: '/',
     display: 'standalone',
-    theme_color: '#0077b6',
+    theme_color: '#ade8f4',
     // icons: [
     //   {
     //     src: '/favicon.ico',

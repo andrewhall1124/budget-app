@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import { useState } from "react";
-import { Card, CardTitle } from "../components";
+import { Card, CardTitle, Button } from "../components";
 
 export default function Cards(){
 
@@ -44,6 +44,9 @@ export default function Cards(){
           <div className="bg-main-2 text-white font-semibol rounded-xl  p-2">2000</div>
         </div>
       </Card>
+      <div className="px-4 w-full flex justify-center">
+        <Button variant="contained">Add New</Button>
+      </div>
     </div>
   )
 }

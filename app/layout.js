@@ -10,7 +10,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className='min-h-screen flex flex-col bg-background'>
-        <main className='flex-1 flex flex-col mb-36'>
+        <Header/>
+        <main className='flex-1 flex flex-col mt-12 mb-36'>
           {children}
         </main>
         <Footer/>  
