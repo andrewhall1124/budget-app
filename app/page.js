@@ -80,8 +80,9 @@ function Date(){
 export default function Home(){
   const [cardClosed, setCardClosed ] = useState(true)
 
-  const [month, setMonth] = useState('November')
+  const [month, setMonth] = useState('All')
   const monthMenu = [
+    'All',
     'September',
     'October',
     'November'
@@ -89,11 +90,11 @@ export default function Home(){
 
   const buttonGroup = [
     'Income',
-    'Expenses',
-    'Transfers'
+    'Expense',
+    'Transfer'
   ]
 
-  const [selectedGroup, setSelectedGroup] = useState("Expenses");
+  const [selectedGroup, setSelectedGroup] = useState("Expense");
 
   const [transactions, setTransactions] = useState([])
 
@@ -140,7 +141,9 @@ export default function Home(){
             </Card>
             <Card>
               {transactions.map((transaction, index) =>(
-                <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount}/>
+                transaction.type == selectedGroup && 
+                  <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount}/>
+                
               ))}
             </Card>
             </div>
