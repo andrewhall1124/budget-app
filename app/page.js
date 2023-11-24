@@ -1,25 +1,54 @@
 'use client'
 import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button } from "./components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "./config/supabaseClient";
 
 function TransactionCard({handleClose}){
   const [card, setCard] = useState("")
   const cardMenu = ['Discover', 'Master Card', 'Visa']
+  const [type, setType] = useState("")
+  const typeMenu = ['Income', 'Expense', 'Transfer']
   const [category, setCategory] = useState("")
   const categoryMenu = ['Gas', 'Groceries', 'Restaurants']
   const [date, setDate] = useState();
   const [notes, setNotes] = useState("")
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState(0.00)
+
+  const handleSubmit = async () => {
+    try {
+      // Send data to the 'your_table_name' table in your Supabase database
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert({ card, type, category, date, notes, amount });
+      handleClose();
+      if (error) {
+        console.error('Error inserting data:', error);
+      } else {
+        console.log('Data inserted successfully:', data);
+        setCard("");
+        setCategory("");
+        setType("")
+        setDate("");
+        setNotes("");
+        setAmount(0.00);
+        handleClose();
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  };
+
   return(
     <Card header={true} handleClose={handleClose}>
       <CardTitle>New Transaction</CardTitle>
       <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
+      <SelectQuestion value={type} setValue={setType} menu={typeMenu}>Type</SelectQuestion>
       <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
       <DateQuestion value={date} setValue={setDate}/>
       <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
-      <AmountQuestion></AmountQuestion>
+      <AmountQuestion value={amount} setValue={setAmount}></AmountQuestion>
       <div className='flex justify-center'>
-        <Button variant='contained' className='bg-main text-contrast' onClick={handleClose}>Submit</Button>
+        <Button variant='contained' className='bg-main text-contrast' onClick={handleSubmit}>Submit</Button>
       </div>
     </Card>
   )
@@ -65,6 +94,18 @@ export default function Home(){
   ]
 
   const [selectedGroup, setSelectedGroup] = useState("Expenses");
+
+  const [transactions, setTransactions] = useState()
+
+  useEffect(() => {
+    getTransactions();
+  }, []);
+
+  async function getTransactions() {
+    const { data } = await supabase.from("transactions").select();
+    setTransactions(data);
+    console.log(data)
+  }
 
   return(
     <>

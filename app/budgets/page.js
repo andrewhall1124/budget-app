@@ -1,6 +1,6 @@
 'use client'
 import React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion } from "../components"
 
 function BudgetCard({handleClose}){
