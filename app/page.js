@@ -54,15 +54,15 @@ function TransactionCard({handleClose}){
   )
 }
 
-function Transaction(){
+function Transaction({category, notes, amount}){
   return(
     <div className="flex justify-between items-center">
       <div>
-        <div className="font-semibold text-main">Groceries</div>
-        <div className="italic">Walmart Run</div>
+        <div className="font-semibold text-main">{category}</div>
+        <div className="italic">{notes}</div>
       </div>
       <div className="bg-light-red font-semibold text-dark-red p-2 text-sm rounded-xl">
-        -100.57
+        {amount}
       </div>
     </div>
   )
@@ -95,17 +95,28 @@ export default function Home(){
 
   const [selectedGroup, setSelectedGroup] = useState("Expenses");
 
-  const [transactions, setTransactions] = useState()
+  const [transactions, setTransactions] = useState([])
 
   useEffect(() => {
     getTransactions();
   }, []);
 
-  async function getTransactions() {
-    const { data } = await supabase.from("transactions").select();
-    setTransactions(data);
-    console.log(data)
-  }
+  const getTransactions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select();
+  
+      if (error) {
+        console.log(error);
+      } else{
+        console.log('Successfuly fetched transactions', data)
+        setTransactions(data);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error.message);
+    }
+  };
 
   return(
     <>
@@ -128,11 +139,9 @@ export default function Home(){
               </div>
             </Card>
             <Card>
-              <Date/>
-              <Transaction/>
-              <Transaction/>
-              <Date/>
-              <Transaction/>
+              {transactions.map((transaction, index) =>(
+                <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount}/>
+              ))}
             </Card>
             </div>
             :
