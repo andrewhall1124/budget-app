@@ -117,6 +117,10 @@ export default function Home(){
     }
   };
 
+  const filteredTransactions = () => {
+    return transactions.filter(transaction => transaction.type === selectedGroup);
+  };
+
   return(
     <>
       <Header openAdd={() => setCardClosed(false)}/>
@@ -138,9 +142,8 @@ export default function Home(){
               </div>
             </Card>
             <Card>
-              {transactions.map((transaction, index) =>(
-                transaction.type == selectedGroup && 
-                  <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type}/>
+              {filteredTransactions().map((transaction, index) =>(
+                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type}/>
               ))}
             </Card>
             </div>
