@@ -54,19 +54,17 @@ function TransactionCard({handleClose}){
   )
 }
 
-function Transaction({category, notes, amount, type}){
+function Transaction({category, notes, amount, type, index}){
   return(
-    <div className="flex justify-between items-center">
+    <div className={`flex justify-between items-center ${index != 0 && 'border-t-2 border-background pt-2'} `}>
       <div>
-        <div className="font-semibold text-main">{category}</div>
-        <div className="italic">{notes}</div>
+        <div className="font-semibold text-main-2">{category}</div>
+        <div>{notes}</div>
       </div>
       <NumberBox color={type == 'Income' ? 'green' : type == 'Expense' ? 'red': 'grey'}>{amount}</NumberBox>
     </div>
   )
 }
-
-// 
 
 function Date(){
 
@@ -142,7 +140,7 @@ export default function Home(){
             <Card>
               {transactions.map((transaction, index) =>(
                 transaction.type == selectedGroup && 
-                  <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type}/>
+                  <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type}/>
               ))}
             </Card>
             </div>

@@ -153,7 +153,7 @@ export function Button({children, onClick}){
 export function CardTitle({children}){
 
   return(
-    <div className='bg-main-2 mt-2 rounded-xl p-2 flex justify-center items-center'>
+    <div className='bg-main-2 mt-2 font-semibold rounded-xl p-2 flex justify-center items-center'>
       <H3>{children}</H3>
     </div>
   )
