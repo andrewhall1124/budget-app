@@ -159,4 +159,13 @@ export function CardTitle({children}){
   )
 }
 
+export function NumberBox({children, color}){
+
+  return(
+    <div className={`bg-light-${color} font-semibold text-dark-${color} p-2 text-sm rounded-xl min-w-[50px] flex justify-center`}>
+      {children}
+    </div>
+  )
+}
+
 

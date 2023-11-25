@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button } from "./components";
+import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button, NumberBox } from "./components";
 import { useState, useEffect } from "react";
 import { supabase } from "./config/supabaseClient";
 
@@ -54,19 +54,19 @@ function TransactionCard({handleClose}){
   )
 }
 
-function Transaction({category, notes, amount}){
+function Transaction({category, notes, amount, type}){
   return(
     <div className="flex justify-between items-center">
       <div>
         <div className="font-semibold text-main">{category}</div>
         <div className="italic">{notes}</div>
       </div>
-      <div className="bg-light-red font-semibold text-dark-red p-2 text-sm rounded-xl">
-        {amount}
-      </div>
+      <NumberBox color={type == 'Income' ? 'green' : type == 'Expense' ? 'red': 'grey'}>{amount}</NumberBox>
     </div>
   )
 }
+
+// 
 
 function Date(){
 
@@ -142,8 +142,7 @@ export default function Home(){
             <Card>
               {transactions.map((transaction, index) =>(
                 transaction.type == selectedGroup && 
-                  <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount}/>
-                
+                  <Transaction key={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type}/>
               ))}
             </Card>
             </div>

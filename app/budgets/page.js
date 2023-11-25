@@ -1,7 +1,7 @@
 'use client'
 import React from "react"
 import { useState, useEffect } from "react"
-import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion } from "../components"
+import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, NumberBox } from "../components"
 import { supabase } from "../config/supabaseClient"
 
 function BudgetCard({handleClose}){
@@ -117,9 +117,7 @@ export default function Budgets(){
             <Card key={index}>
               <div className="flex justify-between items-center">
                 <div className="text-main-2 font-semibold text-xl">{budget.name}</div>
-                <div className="flex gap-1 bg-main-2 p-2 rounded-xl text-white">
-                  <div>{budget.amount}</div>
-                </div>
+                <NumberBox color='grey'>{budget.amount}</NumberBox>
               </div>
             </Card>
           ))}
