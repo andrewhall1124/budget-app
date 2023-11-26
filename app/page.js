@@ -2,7 +2,7 @@
 import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button, NumberBox } from "./components";
 import { useState, useEffect } from "react";
 import { supabase } from "./config/supabaseClient";
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -18,10 +18,8 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
 
-  console.log(date)
-
   const handleSubmit = async (update) => {
-    if(update == true){
+    if(update == true){ //Update transaction
       try {
         const { data, error } = await supabase
           .from('transactions')
@@ -43,8 +41,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
       } catch (error) {
         console.error('Error:', error.message);
       }
-
-    } else{
+    } else{ // Insert new transaction
       try {
         const { data, error } = await supabase
           .from('transactions')
@@ -87,10 +84,35 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
 function Transaction({category, notes, amount, type, index, id}){
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleClose = () =>{
     setAnchorEl(null)
   }
+
+  const openDialog = () =>{
+    handleClose()
+    setDialogOpen(true)
+  }
+
+  const deleteTransaction = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+      if (error) {
+        console.error('Error deleting data:', error);
+      } else {
+        console.log('Data deleted successfully:', data);
+        setDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  }
+
+
 
   return(
     <>
@@ -113,11 +135,19 @@ function Transaction({category, notes, amount, type, index, id}){
             <ListItemText>Edit</ListItemText>
           </MenuItem>
         </Link>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={openDialog}>
           <ListItemIcon><Delete/></ListItemIcon>
           <ListItemText>Delete</ListItemText>
         </MenuItem>
       </Menu>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Delete transaction?</DialogTitle>
+        <DialogContent>Warning: this cannot be undone</DialogContent>
+        <div className="flex justify-center gap-4 pb-4">
+          <Button variant='outline' onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button variant='red' onClick={deleteTransaction}>Delete</Button>
+        </div>
+      </Dialog>
    </>
   )
 }
