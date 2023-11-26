@@ -3,34 +3,58 @@ import React from "react"
 import { useState, useEffect } from "react"
 import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, NumberBox } from "../components"
 import { supabase } from "../config/supabaseClient"
+import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material"
+import { Edit, Delete, MoreVert } from "@mui/icons-material"
+import Link from "next/link"
 
-function BudgetCard({handleClose}){
-  const [name, setName] = useState("")
-  const [amount, setAmount] = useState("")
-  const [type, setType] = useState("")
+export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
+  const [name, setName] = useState(nameInit ? nameInit : "")
+  const [amount, setAmount] = useState(amountInit ? amountInit :"")
+  const [type, setType] = useState(typeInit ? typeInit :"")
   const budgetTypes = [
     'Income',
     'Expense',
   ]
 
-  const handleSubmit = async () => {
-    try {
-      // Send data to the 'your_table_name' table in your Supabase database
-      const { data, error } = await supabase
-        .from('budgets')
-        .insert({ name, type, amount});
-      handleClose();
-      if (error) {
-        console.error('Error inserting data:', error);
-      } else {
-        console.log('Data inserted successfully:', data);
-        setName("");
-        setType("")
-        setAmount(0.00);
+  const handleSubmit = async (update) => {
+    if(update == true) { // Update Budget
+      try {
+        const { data, error } = await supabase
+          .from('budgets')
+          .update({ name, type, amount})
+          .eq('id', id)
         handleClose();
+        if (error) {
+          console.error('Error updating data:', error);
+        } else {
+          console.log('Data updated successfully:', data);
+          setName("");
+          setType("")
+          setAmount(0.00);
+          handleClose();
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
       }
-    } catch (error) {
-      console.error('Error:', error.message);
+    }
+    else{ // Insert new budget
+      try {
+        const { data, error } = await supabase
+          .from('budgets')
+          .insert({ name, type, amount});
+        handleClose();
+        if (error) {
+          console.error('Error inserting data:', error);
+        } else {
+          console.log('Data inserted successfully:', data);
+          setName("");
+          setType("")
+          setAmount(0.00);
+          handleClose();
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
     }
   };
 
@@ -41,9 +65,78 @@ function BudgetCard({handleClose}){
       <SelectQuestion value={type} setValue={setType} menu={budgetTypes}>Type</SelectQuestion>
       <AmountQuestion value={amount} setValue={setAmount}></AmountQuestion>
       <div className='flex justify-center'>
-        <Button variant='contained' className='bg-main text-contrast' onClick={handleSubmit}>Submit</Button>
+        <Button onClick={() => handleSubmit(id ? true : false)}>Submit</Button>
       </div>
     </Card>
+  )
+}
+
+function Budget({name, amount, id}){
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClose = () =>{
+    setAnchorEl(null)
+  }
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const openDialog = () =>{
+    handleClose()
+    setDialogOpen(true)
+  }
+
+  const deleteBudget = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('budgets')
+        .delete()
+        .eq('id', id)
+      if (error) {
+        console.error('Error deleting data:', error);
+      } else {
+        console.log('Data deleted successfully:', data);
+        setDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  return(
+    <>
+      <Card>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
+              <MoreVert/>
+            </IconButton>
+            <div className="text-main-2 font-semibold text-xl">{name}</div>
+          </div>
+          <NumberBox color='grey'>{amount}</NumberBox>
+        </div>
+      </Card>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <Link href={`budgets/edit/${id}`}>
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon><Edit/></ListItemIcon>
+            <ListItemText>Edit</ListItemText>
+          </MenuItem>
+        </Link>
+        <MenuItem onClick={openDialog}>
+          <ListItemIcon><Delete/></ListItemIcon>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>
+      </Menu>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Delete budget?</DialogTitle>
+        <DialogContent>Warning: this cannot be undone</DialogContent>
+        <div className="flex justify-center gap-4 pb-4">
+          <Button variant='outline' onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button variant='red' onClick={deleteBudget}>Delete</Button>
+        </div>
+      </Dialog>
+    </>
   )
 }
 
@@ -114,12 +207,7 @@ export default function Budgets(){
             </div>
           </Card>
           {budgets.map((budget, index) => (
-            <Card key={index}>
-              <div className="flex justify-between items-center">
-                <div className="text-main-2 font-semibold text-xl">{budget.name}</div>
-                <NumberBox color='grey'>{budget.amount}</NumberBox>
-              </div>
-            </Card>
+            <Budget key={index} name={budget.name} amount={budget.amount} id={budget.id}/>
           ))}
       </div>
       ) : (
