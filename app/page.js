@@ -210,32 +210,30 @@ export default function Home(){
     <>
       <Header openAdd={() => setCardClosed(false)}/>
       <div className="relative bg-background flex-1 mt-12">
-        <div className="flex">
-          {cardClosed ?
-            <div className="flex flex-col w-full">
-            <Card>
-              <CardTitle>Transactions</CardTitle>
-              <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>Month</SelectQuestion>
-              <div className="flex w-full border-main-2 border-y-4 border-x-2">
-                {buttonGroup.map((button, index)=>(
-                  <button key={index} 
-                    className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
-                    onClick={()=>setSelectedGroup(button)}>
-                    {button}
-                  </button>
-                ))}
-              </div>
-            </Card>
-            <Card>
-              {filteredTransactions().map((transaction, index) =>(
-                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+        {cardClosed ?
+          <div className="w-full">
+          <Card>
+            <CardTitle>Transactions</CardTitle>
+            <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>Month</SelectQuestion>
+            <div className="flex w-full border-main-2 border-y-4 border-x-2">
+              {buttonGroup.map((button, index)=>(
+                <button key={index} 
+                  className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
+                  onClick={()=>setSelectedGroup(button)}>
+                  {button}
+                </button>
               ))}
-            </Card>
             </div>
-            :
-            <TransactionCard handleClose={() => setCardClosed(true)}/>
-          }
-        </div>
+          </Card>
+          <Card>
+            {filteredTransactions().map((transaction, index) =>(
+              <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+            ))}
+          </Card>
+          </div>
+          :
+          <TransactionCard handleClose={() => setCardClosed(true)}/>
+        }
       </div>
     </>
   )

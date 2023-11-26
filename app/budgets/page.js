@@ -213,7 +213,6 @@ export default function Budgets(){
       ) : (
         <BudgetCard handleClose={() => setModalClosed(true)}/>
       )}
-
     </div>
   </>
   )
