@@ -84,11 +84,12 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
 function Transaction({category, notes, amount, type, index, id}){
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleClose = () =>{
     setAnchorEl(null)
   }
+
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const openDialog = () =>{
     handleClose()
@@ -112,8 +113,6 @@ function Transaction({category, notes, amount, type, index, id}){
     }
   }
 
-
-
   return(
     <>
       <div className={`flex justify-between items-center ${index != 0 && 'border-t-2 border-background pt-2'} `}>
@@ -129,7 +128,7 @@ function Transaction({category, notes, amount, type, index, id}){
         <NumberBox color={type == 'Income' ? 'green' : type == 'Expense' ? 'red': 'grey'}>{amount}</NumberBox>
       </div>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <Link href={`edit/${id}`}>
+        <Link href={`/edit/${id}`}>
           <MenuItem onClick={handleClose}>
             <ListItemIcon><Edit/></ListItemIcon>
             <ListItemText>Edit</ListItemText>

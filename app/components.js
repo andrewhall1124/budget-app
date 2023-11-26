@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 import { useState } from 'react'
-import { AccountBalanceWallet, AttachMoney, Close, CreditCard, Add, AccountCircle } from '@mui/icons-material'
-import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput } from '@mui/material'
+import { AccountBalanceWallet, AttachMoney, Close, CreditCard, Add, AccountCircle, Edit, Delete, MoreVert } from '@mui/icons-material'
+import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput, Menu, ListItemIcon, ListItemText } from '@mui/material'
 import Link from 'next/link'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -32,12 +32,12 @@ export function Footer(){
             <AttachMoney fontSize='large' sx={{color:"white"}}/>
           </IconButton>
         </Link>
-        <Link href='budgets'>
+        <Link href='/budgets'>
           <IconButton>
             <AccountBalanceWallet fontSize='large' sx={{color:"white"}}/>
           </IconButton>
         </Link>
-        <Link href='cards'>
+        <Link href='/cards'>
           <IconButton>
             <CreditCard fontSize='large' sx={{color:"white"}}/>
           </IconButton>
