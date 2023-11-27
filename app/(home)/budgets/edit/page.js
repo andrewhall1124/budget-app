@@ -1,4 +1,4 @@
-import { Card, CardTitle } from "../../components";
+import { Card, CardTitle } from "../../../components";
 
 
 export default function Edit(){

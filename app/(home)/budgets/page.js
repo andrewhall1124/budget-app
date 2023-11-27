@@ -1,8 +1,8 @@
 'use client'
 import React from "react"
 import { useState, useEffect } from "react"
-import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, NumberBox } from "../components"
-import { supabase } from "../config/supabaseClient"
+import { SelectQuestion, Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, NumberBox } from "../../components"
+import { supabase } from "../../config/supabaseClient"
 import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material"
 import { Edit, Delete, MoreVert } from "@mui/icons-material"
 import Link from "next/link"

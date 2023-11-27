@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
         <main className=' flex-1 flex flex-col mb-36'>
           {children}
         </main>
-        <Footer/>  
+        <Footer/>
       </body>
     </html>
   )

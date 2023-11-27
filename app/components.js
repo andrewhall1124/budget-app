@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { useState } from 'react'
 import { AccountBalanceWallet, AttachMoney, Close, CreditCard, Add, AccountCircle, Edit, Delete, MoreVert } from '@mui/icons-material'
 import { IconButton, Select, MenuItem, InputLabel, FormControl, TextField, InputAdornment, OutlinedInput, Menu, ListItemIcon, ListItemText } from '@mui/material'
 import Link from 'next/link'
@@ -8,16 +7,18 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-export function Header({openAdd, openAccount}){
+export function Header({openAdd}){
   return(
     <div className='fixed bg-background w-full top-0 h-12 z-40'>
       <div className='flex justify-end items-center gap-2 h-full px-4'>
         <IconButton onClick={openAdd}>
           <Add sx={{color: 'white'}} fontSize='large'/>
         </IconButton>
-        <IconButton onClick={openAccount}>
-          <AccountCircle sx={{color: 'white'}} fontSize='large'/>
-        </IconButton>
+        <Link href='account'>
+          <IconButton>
+            <AccountCircle sx={{color: 'white'}} fontSize='large'/>
+          </IconButton>
+        </Link>
       </div>
     </div>
   )

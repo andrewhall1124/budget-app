@@ -1,10 +1,10 @@
 'use client'
 import React from "react";
 import { useState, useEffect } from "react";
-import { Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, SelectQuestion, NumberBox } from "../components";
+import { Card, CardTitle, Button, Header, TextAreaQuestion, AmountQuestion, SelectQuestion, NumberBox } from "../../components";
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { MoreVert, Edit, Delete } from "@mui/icons-material";
-import { supabase } from "../config/supabaseClient";
+import { supabase } from "../../config/supabaseClient";
 import Link from "next/link";
 
 export function CardCard({handleClose, nameInit, amountInit, typeInit, id}){
