@@ -1,8 +1,8 @@
 'use client'
 import Link from "next/link";
-import { Card, CardTitle, TextQuestion, Button } from "../../components";
+import { Card, CardTitle, TextQuestion, Button } from "@/app/components";
 import { useState } from "react";
-import { supabase } from "../../config/supabaseClient";
+import { supabase } from "@/app/config/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function Page(){
@@ -44,7 +44,7 @@ export default function Page(){
       </div>
       <div className="flex justify-center gap-2">
         <div>
-          Don't have an account?
+          Don&apos;t have an account?
         </div>
         <Link href='signup'>
           <button className="text-blue-500 font-semibold">
