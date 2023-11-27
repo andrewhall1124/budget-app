@@ -14,7 +14,7 @@ export function Header({openAdd}){
         <IconButton onClick={openAdd}>
           <Add sx={{color: 'white'}} fontSize='large'/>
         </IconButton>
-        <Link href='account'>
+        <Link href='/account'>
           <IconButton>
             <AccountCircle sx={{color: 'white'}} fontSize='large'/>
           </IconButton>

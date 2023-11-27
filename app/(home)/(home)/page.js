@@ -1,7 +1,7 @@
 'use client'
-import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button, NumberBox } from "../components";
+import { Card, CardTitle, SelectQuestion, Header, DateQuestion, TextAreaQuestion, AmountQuestion, Button, NumberBox } from "@/app/components";
 import { useState, useEffect } from "react";
-import { supabase } from "../config/supabaseClient";
+import { supabase } from "@/app/config/supabaseClient";
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import Link from "next/link";
@@ -208,7 +208,6 @@ export default function Home(){
 
   return(
     <>
-      <Header openAdd={() => setCardClosed(false)}/>
       <div className="relative bg-background flex-1 mt-12">
         {cardClosed ?
           <div className="w-full">

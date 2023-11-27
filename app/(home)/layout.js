@@ -1,5 +1,4 @@
 import '../globals.css'
-import { Footer } from '../components'
 
 export const metadata = {
   title: 'Create Next App',
@@ -11,10 +10,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className='min-h-screen flex flex-col bg-background'>
-        <main className=' flex-1 flex flex-col mb-36'>
+        <main className='flex-1 flex flex-col'>
           {children}
         </main>
-        <Footer/>
       </body>
     </html>
   )
