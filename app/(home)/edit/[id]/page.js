@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { supabase } from "@/app/config/supabaseClient"
-import { TransactionCard } from "@/app/page"
+import { TransactionCard } from "../../page"
 import { useRouter } from "next/navigation"
 
 export default function Edit(){
