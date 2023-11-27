@@ -1,8 +1,8 @@
 'use client'
 import Link from "next/link";
-import { Card, CardTitle, TextQuestion, Button } from "../components";
+import { Card, CardTitle, TextQuestion, Button } from "../../components";
 import { useState } from "react";
-import { supabase } from "../config/supabaseClient";
+import { supabase } from "../../config/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function Page(){

@@ -1,7 +1,7 @@
 'use client'
-import { Card, CardTitle, TextQuestion, Button } from "../components";
+import { Card, CardTitle, TextQuestion, Button } from "../../components";
 import { useState } from "react";
-import { supabase } from "../config/supabaseClient";
+import { supabase } from "../../config/supabaseClient";
 
 export default function Page(){
   const [email, setEmail] = useState("")
