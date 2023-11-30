@@ -11,16 +11,25 @@ import { usePathname } from 'next/navigation'
 export function Header(){
   const url = usePathname().split('/')
   const currentPage = url[url.length-1]
+  let addLink = "/add"
+  if(currentPage == "add"){
+    addLink = ""
+  }
 
   return(
     <div className='fixed bg-background w-full top-0 h-12 z-40'>
       <div className='flex justify-end items-center gap-2 h-full px-4'>
-        <Link href={currentPage + '/add'}>
-          <IconButton>
-            <Add sx={{color: 'white'}} fontSize='large'/>
-          </IconButton>
-        </Link>
-        <Link href='/account'>
+          {
+            currentPage == "account" ?
+            <div></div>:
+            <Link href={currentPage + `${addLink}`}>
+              <IconButton>
+                <Add sx={{color: 'white'}} fontSize='large'/>
+              </IconButton>
+            </Link>
+          }
+
+        <Link href={`/account`}>
           <IconButton>
             <AccountCircle sx={{color: 'white'}} fontSize='large'/>
           </IconButton>
