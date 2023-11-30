@@ -6,14 +6,20 @@ import Link from 'next/link'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { usePathname } from 'next/navigation'
 
-export function Header({openAdd}){
+export function Header(){
+  const url = usePathname().split('/')
+  const currentPage = url[url.length-1]
+
   return(
     <div className='fixed bg-background w-full top-0 h-12 z-40'>
       <div className='flex justify-end items-center gap-2 h-full px-4'>
-        <IconButton onClick={openAdd}>
-          <Add sx={{color: 'white'}} fontSize='large'/>
-        </IconButton>
+        <Link href={currentPage + '/add'}>
+          <IconButton>
+            <Add sx={{color: 'white'}} fontSize='large'/>
+          </IconButton>
+        </Link>
         <Link href='/account'>
           <IconButton>
             <AccountCircle sx={{color: 'white'}} fontSize='large'/>

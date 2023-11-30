@@ -183,7 +183,7 @@ export default function Budgets(){
 
   return(
     <>
-    <div className="mt-12">
+    <div>
       {modalClosed ? (
         <div>
           <Card>

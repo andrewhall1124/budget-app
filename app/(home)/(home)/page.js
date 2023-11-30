@@ -160,8 +160,7 @@ function Date(){
   )
 }
 
-export default function Home(){
-  const [cardClosed, setCardClosed ] = useState(true)
+export default function Transactions({addCardClosed}){
 
   const [month, setMonth] = useState('All')
   const monthMenu = [
@@ -208,8 +207,8 @@ export default function Home(){
 
   return(
     <>
-      <div className="relative bg-background flex-1 mt-12">
-        {cardClosed ?
+      <div className="relative bg-background flex-1">
+        {!addCardClosed ?
           <div className="w-full">
           <Card>
             <CardTitle>Transactions</CardTitle>
@@ -231,7 +230,7 @@ export default function Home(){
           </Card>
           </div>
           :
-          <TransactionCard handleClose={() => setCardClosed(true)}/>
+          <TransactionCard handleClose={()=>handleClose()}/>
         }
       </div>
     </>
