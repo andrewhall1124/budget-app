@@ -1,16 +1,19 @@
 'use client'
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Card, CardTitle, Button, TextAreaQuestion, AmountQuestion, SelectQuestion, NumberBox } from "@/app/components";
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { MoreVert, Edit, Delete } from "@mui/icons-material";
 import { supabase } from "@/app/config/supabaseClient";
 import Link from "next/link";
+import { AuthContext } from "../layout";
 
 export function CardCard({handleClose, nameInit, amountInit, typeInit, id}){
   const [name, setName] = useState(nameInit ? nameInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit : 0)
   const [type, setType] = useState(typeInit ? typeInit : "")
+  const user_id = useContext(AuthContext).user.id
+
   const cardTypes = [
     'Debit',
     'Credit',
@@ -42,7 +45,7 @@ export function CardCard({handleClose, nameInit, amountInit, typeInit, id}){
       try {
         const { data, error } = await supabase
           .from('cards')
-          .insert({ name, amount, type });
+          .insert({ name, amount, type, user_id });
         handleClose();
         if (error) {
           console.error('Error inserting data:', error);
@@ -144,6 +147,8 @@ function CardLine({amount, name, id}){
 }
 
 export default function Cards(){
+  const user_id = useContext(AuthContext).user.id
+
   const [modalClosed, setModalClosed] = useState(true)
 
   const buttonGroup = [
@@ -154,8 +159,10 @@ export default function Cards(){
   const [selectedGroup, setSelectedGroup] = useState("Debit");
 
   useEffect(() => {
-    getCards();
-  }, []);
+    if(user_id){
+      getCards();
+    }
+  }, [user_id]);
 
   const [cards, setCards] = useState([])
 
@@ -164,7 +171,8 @@ export default function Cards(){
       // Send data to the 'your_table_name' table in your Supabase database
       const { data, error } = await supabase
         .from('cards')
-        .select();
+        .select()
+        .eq("user_id", user_id)
 
       if (error) {
         console.error('Error inserting data:', error);

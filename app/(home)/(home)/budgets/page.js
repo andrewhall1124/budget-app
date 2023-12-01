@@ -1,16 +1,19 @@
 'use client'
 import React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { SelectQuestion, Card, CardTitle, Button, TextAreaQuestion, AmountQuestion, NumberBox } from "@/app/components"
 import { supabase } from "@/app/config/supabaseClient"
 import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Dialog, DialogTitle, DialogContent } from "@mui/material"
 import { Edit, Delete, MoreVert } from "@mui/icons-material"
 import Link from "next/link"
+import { AuthContext } from "../layout"
 
 export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
   const [name, setName] = useState(nameInit ? nameInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit :"")
   const [type, setType] = useState(typeInit ? typeInit :"")
+  const user_id = useContext(AuthContext).user.id
+
   const budgetTypes = [
     'Income',
     'Expense',
@@ -41,7 +44,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
       try {
         const { data, error } = await supabase
           .from('budgets')
-          .insert({ name, type, amount});
+          .insert({ name, type, amount, user_id});
         handleClose();
         if (error) {
           console.error('Error inserting data:', error);
@@ -141,6 +144,8 @@ function Budget({name, amount, id}){
 }
 
 export default function Budgets(){
+  const user_id = useContext(AuthContext).user.id
+
   const [modalClosed, setModalClosed] = useState(true)
 
   const [month, setMonth] = useState('November')
@@ -168,7 +173,8 @@ export default function Budgets(){
     try {
       const { data, error } = await supabase
         .from('budgets')
-        .select();
+        .select()
+        .eq("user_id", user_id)
   
       if (error) {
         console.log(error);
