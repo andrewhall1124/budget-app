@@ -7,12 +7,14 @@ import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Dialog, DialogT
 import { Edit, Delete, MoreVert } from "@mui/icons-material"
 import Link from "next/link"
 import { AuthContext } from "../layout"
+import dayjs from "dayjs"
 
 export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
   const [name, setName] = useState(nameInit ? nameInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit :"")
   const [type, setType] = useState(typeInit ? typeInit :"")
   const user_id = useContext(AuthContext).user.id
+  const date = dayjs()
 
   const budgetTypes = [
     'Income',
@@ -44,7 +46,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
       try {
         const { data, error } = await supabase
           .from('budgets')
-          .insert({ name, type, amount, user_id});
+          .insert({ name, type, amount, user_id, date});
         handleClose();
         if (error) {
           console.error('Error inserting data:', error);
@@ -145,14 +147,12 @@ function Budget({name, amount, id}){
 
 export default function Budgets(){
   const user_id = useContext(AuthContext).user.id
-
   const [modalClosed, setModalClosed] = useState(true)
-
-  const [month, setMonth] = useState('November')
+  const currentDate = dayjs()
+  const [month, setMonth] = useState(currentDate.format('MMMM'))
   const monthMenu = [
-    'September',
-    'October',
-    'November'
+    'November',
+    'December'
   ]
 
   const buttonGroup = [
@@ -175,7 +175,6 @@ export default function Budgets(){
         .from('budgets')
         .select()
         .eq("user_id", user_id)
-  
       if (error) {
         console.log(error);
       } else{
@@ -212,7 +211,8 @@ export default function Budgets(){
             </div>
           </Card>
           {budgets.map((budget, index) => (
-            <Budget key={index} name={budget.name} amount={budget.amount} id={budget.id}/>
+            budget.date && dayjs(budget.date).format("MMMM") == month &&
+              <Budget key={index} name={budget.name} amount={budget.amount} id={budget.id}/>
           ))}
       </div>
       ) : (

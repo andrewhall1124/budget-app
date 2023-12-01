@@ -10,15 +10,16 @@ import { AuthContext } from "./layout";
 
 export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, notesInit, amountInit, handleClose, id}){
   const [card, setCard] = useState(cardInit ? cardInit : "")
-  const cardMenu = ['Discover', 'Master Card', 'Visa']
   const [type, setType] = useState(typeInit ? typeInit : "")
   const typeMenu = ['Income', 'Expense', 'Transfer']
   const [category, setCategory] = useState(categoryInit ? categoryInit : "")
-  const categoryMenu = ['Gas', 'Groceries', 'Restaurants']
   const [date, setDate] = useState(dateInit && dateInit );
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
   const user_id = useContext(AuthContext).user.id
+
+  const [cardOptions, setCardOptions] = useState([])
+  const [categoryOptions, setCategoryOptions] = useState([])
 
   const handleSubmit = async (update) => {
     if(update == true){ //Update transaction
@@ -65,15 +66,63 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
         console.error('Error:', error.message);
       }
     }
-    
   };
+
+  const getCategories = async () =>{
+    try{
+      const { data, error } = await supabase
+        .from('budgets')
+        .select('name')
+      if(error){
+        console.log(error)
+      }
+      else{
+        console.log(data)
+        setCategoryOptions(convertData(data))
+      }
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
+  const getCards = async () => {
+    try{
+      const { data, error } = await supabase
+        .from('cards')
+        .select('name')
+      if(error){
+        console.log(error)
+      }
+      else{
+        console.log(data)
+        setCardOptions(convertData(data))
+      }
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
+  function convertData(objectArray){
+    let outputArray = []
+    for(const object of objectArray){
+      outputArray.push(object.name)
+    }
+    return outputArray
+  }
+
+  useEffect(()=>{
+    getCards()
+    getCategories()
+  },[])
 
   return(
     <Card header={true} handleClose={handleClose}>
       <CardTitle>New Transaction</CardTitle>
-      <SelectQuestion value={card} setValue={setCard} menu={cardMenu}>Card</SelectQuestion>
+      <SelectQuestion value={card} setValue={setCard} menu={cardOptions}>Card</SelectQuestion>
       <SelectQuestion value={type} setValue={setType} menu={typeMenu}>Type</SelectQuestion>
-      <SelectQuestion value={category} setValue={setCategory} menu={categoryMenu}>Category</SelectQuestion>
+      <SelectQuestion value={category} setValue={setCategory} menu={categoryOptions}>Category</SelectQuestion>
       <DateQuestion value={dayjs(date)} setValue={setDate}/>
       <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
       <AmountQuestion value={amount} setValue={setAmount}></AmountQuestion>
@@ -118,7 +167,7 @@ function Transaction({category, notes, amount, type, index, id}){
 
   return(
     <>
-      <div className={`flex justify-between items-center ${index != 0 && 'border-t-2 border-background pt-2'} `}>
+      <div className={`flex justify-between items-center 'border-b-2 border-background`}>
         <div className="flex">
           <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
             <MoreVert/>
@@ -164,13 +213,13 @@ function Date(){
 }
 
 export default function Transactions(){
+  const currentDate = dayjs()
   const user_id = useContext(AuthContext).user.id
-  const [month, setMonth] = useState('All')
+  const [month, setMonth] = useState(currentDate.format("MMMM"))
   const monthMenu = [
     'All',
-    'September',
-    'October',
-    'November'
+    'November',
+    'December'
   ]
 
   const buttonGroup = [
@@ -206,10 +255,6 @@ export default function Transactions(){
     }
   };
 
-  const filteredTransactions = () => {
-    return transactions.filter(transaction => transaction.type === selectedGroup);
-  };
-
   return(
     <>
       <div className="relative bg-background flex-1">
@@ -228,7 +273,11 @@ export default function Transactions(){
           </div>
         </Card>
         <Card>
-          {filteredTransactions().map((transaction, index) =>(
+          {transactions.map((transaction, index) =>(
+            transaction.type == selectedGroup && month == 'All' ?
+            <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+            :
+            transaction.type == selectedGroup && transaction.date && dayjs(transaction.date).format("MMMM") == month &&
             <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
           ))}
         </Card>
