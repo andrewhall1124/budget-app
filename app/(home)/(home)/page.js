@@ -1,11 +1,12 @@
 'use client'
 import { Card, CardTitle, SelectQuestion, DateQuestion, TextAreaQuestion, AmountQuestion, Button, NumberBox } from "@/app/components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { supabase } from "@/app/config/supabaseClient";
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import Link from "next/link";
 import dayjs from "dayjs";
+import { AuthContext } from "./layout";
 
 export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, notesInit, amountInit, handleClose, id}){
   const [card, setCard] = useState(cardInit ? cardInit : "")
@@ -17,6 +18,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
   const [date, setDate] = useState(dateInit && dateInit );
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
+  const user_id = useContext(AuthContext).user.id
 
   const handleSubmit = async (update) => {
     if(update == true){ //Update transaction
@@ -45,7 +47,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
       try {
         const { data, error } = await supabase
           .from('transactions')
-          .insert({ card, type, category, date, notes, amount });
+          .insert({ card, type, category, date, notes, amount, user_id });
         handleClose();
         if (error) {
           console.error('Error inserting data:', error);
@@ -63,6 +65,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
         console.error('Error:', error.message);
       }
     }
+    
   };
 
   return(
@@ -161,7 +164,7 @@ function Date(){
 }
 
 export default function Transactions({addCardClosed}){
-
+  const user_id = useContext(AuthContext).user.id
   const [month, setMonth] = useState('All')
   const monthMenu = [
     'All',
@@ -181,19 +184,21 @@ export default function Transactions({addCardClosed}){
   const [transactions, setTransactions] = useState([])
 
   useEffect(() => {
-    getTransactions();
-  }, []);
+    if(user_id){
+      getTransactions();
+    }
+  }, [user_id]);
 
   const getTransactions = async () => {
     try {
       const { data, error } = await supabase
         .from('transactions')
-        .select();
-  
+        .select()
+        .eq('user_id', user_id)
       if (error) {
         console.log(error);
       } else{
-        console.log('Successfuly fetched transactions', data)
+        console.log('Successfuly fetched transactions')
         setTransactions(data);
       }
     } catch (error) {
