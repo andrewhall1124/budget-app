@@ -15,7 +15,7 @@ export default function Layout({ children }) {
       try {
         const { data, error } = await supabase.auth.refreshSession();
         if (error) {
-          // router.push('/login')
+          router.push('/login')
         } else {
           const { user, session } = data;
           setUser(user);

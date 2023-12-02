@@ -13,9 +13,9 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
   const [type, setType] = useState(typeInit ? typeInit : "")
   const typeMenu = ['Income', 'Expense', 'Transfer']
   const [category, setCategory] = useState(categoryInit ? categoryInit : "")
-  const [date, setDate] = useState(dateInit && dateInit );
+  const [date, setDate] = useState(dateInit ? dateInit : dayjs() );
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
-  const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
+  const [amount, setAmount] = useState(amountInit ? amountInit : null)
   const user_id = useContext(AuthContext).user.id
 
   const [cardOptions, setCardOptions] = useState([])
@@ -38,7 +38,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
           setType("")
           setDate("");
           setNotes("");
-          setAmount(0.00);
+          setAmount(null);
           handleClose();
         }
       } catch (error) {
@@ -59,7 +59,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
           setType("")
           setDate("");
           setNotes("");
-          setAmount(0.00);
+          setAmount(null);
           handleClose();
         }
       } catch (error) {
