@@ -13,9 +13,10 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
   const [type, setType] = useState(typeInit ? typeInit : "")
   const typeMenu = ['Income', 'Expense', 'Transfer']
   const [category, setCategory] = useState(categoryInit ? categoryInit : "")
-  const [date, setDate] = useState(dateInit ? dateInit : dayjs() );
+  const currentDate = dayjs()
+  const [date, setDate] = useState(dateInit ? dateInit : currentDate );
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
-  const [amount, setAmount] = useState(amountInit ? amountInit : null)
+  const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
   const user_id = useContext(AuthContext).user.id
 
   const [cardOptions, setCardOptions] = useState([])
@@ -38,7 +39,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
           setType("")
           setDate("");
           setNotes("");
-          setAmount(null);
+          setAmount(0.00);
           handleClose();
         }
       } catch (error) {
@@ -59,7 +60,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
           setType("")
           setDate("");
           setNotes("");
-          setAmount(null);
+          setAmount(0.00);
           handleClose();
         }
       } catch (error) {
@@ -123,7 +124,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
       <SelectQuestion value={card} setValue={setCard} menu={cardOptions}>Card</SelectQuestion>
       <SelectQuestion value={type} setValue={setType} menu={typeMenu}>Type</SelectQuestion>
       <SelectQuestion value={category} setValue={setCategory} menu={categoryOptions}>Category</SelectQuestion>
-      <DateQuestion value={dayjs(date)} setValue={setDate}/>
+      <DateQuestion value={date} setValue={setDate}/>
       <TextAreaQuestion value={notes} setValue={setNotes}>Notes</TextAreaQuestion>
       <AmountQuestion value={amount} setValue={setAmount}></AmountQuestion>
       <div className='flex justify-center'>

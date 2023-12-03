@@ -11,7 +11,7 @@ import dayjs from "dayjs"
 
 export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
   const [name, setName] = useState(nameInit ? nameInit : "")
-  const [amount, setAmount] = useState(amountInit ? amountInit :"")
+  const [amountPlanned, setAmountPlanned] = useState(amountInit ? amountInit :"")
   const [type, setType] = useState(typeInit ? typeInit :"")
   const user_id = useContext(AuthContext).user.id
   const date = dayjs()
@@ -26,7 +26,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
       try {
         const { data, error } = await supabase
           .from('budgets')
-          .update({ name, type, amount})
+          .update({ name, type, amountPlanned})
           .eq('id', id)
         handleClose();
         if (error) {
@@ -35,7 +35,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
           console.log('Data updated successfully:', data);
           setName("");
           setType("")
-          setAmount(0.00);
+          setAmountPlanned(0.00);
           handleClose();
         }
       } catch (error) {
@@ -46,7 +46,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
       try {
         const { data, error } = await supabase
           .from('budgets')
-          .insert({ name, type, amount, user_id, date});
+          .insert({ name, type, amountPlanned, user_id, date});
         handleClose();
         if (error) {
           console.error('Error inserting data:', error);
@@ -54,7 +54,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
           console.log('Data inserted successfully:', data);
           setName("");
           setType("")
-          setAmount(0.00);
+          setAmountPlanned(0.00);
           handleClose();
         }
       } catch (error) {
@@ -68,7 +68,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
       <CardTitle>New Category</CardTitle>
       <TextAreaQuestion value={name} setValue={setName}>Name</TextAreaQuestion>
       <SelectQuestion value={type} setValue={setType} menu={budgetTypes}>Type</SelectQuestion>
-      <AmountQuestion value={amount} setValue={setAmount}></AmountQuestion>
+      <AmountQuestion value={amountPlanned} setValue={setAmountPlanned}></AmountQuestion>
       <div className='flex justify-center'>
         <Button onClick={() => handleSubmit(id ? true : false)}>Submit</Button>
       </div>
@@ -147,9 +147,12 @@ function Budget({name, amount, id}){
 
 export default function Budgets(){
   const user_id = useContext(AuthContext).user.id
-  const [modalClosed, setModalClosed] = useState(true)
   const currentDate = dayjs()
   const [month, setMonth] = useState(currentDate.format('MMMM'))
+  const [selectedGroup, setSelectedGroup] = useState("Spent");
+  const [budgets, setBudgets] = useState([])
+  const [categories, setCategories] = useState([])
+
   const monthMenu = [
     'November',
     'December'
@@ -161,35 +164,60 @@ export default function Budgets(){
     'Remaining'
   ]
 
-  const [selectedGroup, setSelectedGroup] = useState("Spent");
-
-  const [budgets, setBudgets] = useState([])
-
   useEffect(() => {
-    getBudgets();
+    getData()
   }, []);
 
-  const getBudgets = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('budgets')
-        .select()
-        .eq("user_id", user_id)
-      if (error) {
-        console.log(error);
-      } else{
-        console.log('Successfuly fetched budgets', data)
-        setBudgets(data);
-      }
-    } catch (error) {
-      console.error('Error fetching budgets:', error.message);
-    }
+  const getData = async () => {
+    const { data: budgets, budgetError } = await supabase
+      .from('budgets')
+      .select()
+      // .eq("user_id", user_id)
+
+    const selectedMonth = dayjs().month(monthMapping[month])
+    const startDate = selectedMonth.startOf('month')
+    const endDate = selectedMonth.endOf('month')
+    const {data: transactions, transactionError} = await supabase
+      .from('transactions')
+      .select()
+      .eq("user_id", user_id)
+      .gte("date", startDate)
+      .lte("date", endDate)
+    
+    const categoriesWithTotal = budgets.map(budget => {
+      const amountSpent = transactions
+        .filter(transaction => transaction.category === budget.name)
+        .reduce((acc, transaction) => acc + transaction.amount, 0);
+
+      return {
+        ...budget,
+        amountSpent,
+      };
+    });
+
+    console.log(categoriesWithTotal)
+
+    setCategories(categoriesWithTotal);
+  };
+
+  const monthMapping = {
+    January: 0,
+    February: 1,
+    March: 2,
+    April: 3,
+    May: 4,
+    June: 5,
+    July: 6,
+    August: 7,
+    September: 8,
+    October: 9,
+    November: 10,
+    December: 11,
   };
 
   return(
     <>
     <div>
-      {modalClosed ? (
         <div>
           <Card>
             <CardTitle>Budget</CardTitle>
@@ -210,15 +238,24 @@ export default function Budgets(){
               ))}
             </div>
           </Card>
-          {budgets.map((budget, index) => (
-            budget.date && dayjs(budget.date).format("MMMM") == month &&
-              <Budget key={index} name={budget.name} amount={budget.amount} id={budget.id}/>
-          ))}
+          {selectedGroup == "Planned" ?
+            (categories.map((category, index) => (
+              category.date && dayjs(category.date).format("MMMM") == month &&
+                <Budget key={index} name={category.name} amount={category.amountPlanned} id={category.id}/>
+            )))
+            :
+            selectedGroup == "Spent" ?
+            (categories.map((category, index) => (
+              <Budget key={index} name={category.name} amount={category.amountSpent} id={category.id}/>
+              )))
+            :
+            (categories.map((category, index) => (
+              category.date && dayjs(category.date).format("MMMM") == month &&
+              <Budget key={index} name={category.name} amount={(category.amountPlanned - category.amountSpent)} id={category.id}/>
+              )))
+          }
+        </div>
       </div>
-      ) : (
-        <BudgetCard handleClose={() => setModalClosed(true)}/>
-      )}
-    </div>
-  </>
+    </>
   )
 }
