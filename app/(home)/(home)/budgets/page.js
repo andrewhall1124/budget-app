@@ -172,7 +172,11 @@ export default function Budgets(){
     const { data: budgets, budgetError } = await supabase
       .from('budgets')
       .select()
-      // .eq("user_id", user_id)
+      .eq("user_id", user_id)
+
+    if(budgetError){
+      console.error(budgetError)
+    }
 
     const selectedMonth = dayjs().month(monthMapping[month])
     const startDate = selectedMonth.startOf('month')
@@ -183,6 +187,10 @@ export default function Budgets(){
       .eq("user_id", user_id)
       .gte("date", startDate)
       .lte("date", endDate)
+
+    if(transactionError){
+      console.error(transactionError)
+    }
     
     const categoriesWithTotal = budgets.map(budget => {
       const amountSpent = transactions
