@@ -14,7 +14,7 @@ export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, not
   const typeMenu = ['Income', 'Expense', 'Transfer']
   const [category, setCategory] = useState(categoryInit ? categoryInit : "")
   const currentDate = dayjs()
-  const [date, setDate] = useState(dateInit ? dateInit : currentDate );
+  const [date, setDate] = useState(dateInit ? dayjs(dateInit) : currentDate );
   const [notes, setNotes] = useState(notesInit ? notesInit : "")
   const [amount, setAmount] = useState(amountInit ? amountInit : 0.00)
   const user_id = useContext(AuthContext).user.id

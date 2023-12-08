@@ -204,7 +204,7 @@ export function NumberBox({children, color}){
 
   return(
     <div className={`font-semibold p-2 text-sm rounded-xl min-w-[50px] flex justify-center ${style()}`}>
-      {children}
+      {Math.round(children)}
     </div>
   )
 }
