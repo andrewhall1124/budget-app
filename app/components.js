@@ -41,22 +41,25 @@ export function Header(){
 
 export function Footer(){
   return(
-    <footer className='bg-main fixed w-full bottom-0 h-28 px-16 shadow-lg z-40 pb-8'>
+    <footer className='bg-main fixed w-full bottom-0 h-28 shadow-lg z-40 pb-8 px-8'>
       <div className='flex justify-between items-center h-full'>
         <Link href='/'>
-          <IconButton>
+          <div className='flex flex-col items-center w-24'>
             <AttachMoney fontSize='large' sx={{color:"white"}}/>
-          </IconButton>
+            <div className='text-contrast text-sm'>Transactions</div>
+          </div>
         </Link>
         <Link href='/budgets'>
-          <IconButton>
+          <div className='flex flex-col items-center w-24'>
             <AccountBalanceWallet fontSize='large' sx={{color:"white"}}/>
-          </IconButton>
+            <div className='text-contrast text-sm'>Budgets</div>
+          </div>
         </Link>
         <Link href='/cards'>
-          <IconButton>
-            <CreditCard fontSize='large' sx={{color:"white"}}/>
-          </IconButton>
+          <div className='flex flex-col items-center w-24'>
+          <CreditCard fontSize='large' sx={{color:"white"}}/>
+              <div className='text-contrast text-sm'>Cards</div>
+          </div>
         </Link>
       </div>
     </footer> 
