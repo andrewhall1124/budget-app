@@ -11,7 +11,7 @@ import { AuthContext } from "./layout";
 export function TransactionCard({cardInit, typeInit, categoryInit, dateInit, notesInit, amountInit, handleClose, id}){
   const [card, setCard] = useState(cardInit ? cardInit : "")
   const [type, setType] = useState(typeInit ? typeInit : "")
-  const typeMenu = ['Income', 'Expense', 'Transfer']
+  const typeMenu = ['Income', 'Expense']
   const [category, setCategory] = useState(categoryInit ? categoryInit : "")
   const currentDate = dayjs()
   const [date, setDate] = useState(dateInit ? dayjs(dateInit) : currentDate );
@@ -204,11 +204,11 @@ function Transaction({category, notes, amount, type, index, id}){
   )
 }
 
-function Date(){
+function Date({date}){
 
   return(
     <div className="text-white bg-grey rounded-xl text-sm p-2 font-semibold text-center">
-      November 24th 2000
+      {date}
     </div>
   )
 }
@@ -225,13 +225,14 @@ export default function Transactions(){
 
   const buttonGroup = [
     'Income',
-    'Expense',
-    'Transfer'
+    'Expense'
   ]
 
   const [selectedGroup, setSelectedGroup] = useState("Expense");
 
-  const [transactions, setTransactions] = useState([])
+  const [incomeArray, setIncomeArray] = useState([])
+  const [expensesArray, setExpensesArray] = useState([])
+
 
   useEffect(() => {
     if(user_id){
@@ -248,8 +249,36 @@ export default function Transactions(){
       if (error) {
         console.log(error);
       } else{
-        console.log('Successfuly fetched transactions')
-        setTransactions(data);
+        console.log('Successfuly fetched transactions', data)
+
+        const sortedTransactions = data.sort((a, b) => {
+          const dateA = dayjs(a.date)
+          const dateB = dayjs(b.date)
+          return dateB - dateA;
+        });
+
+        const expenseTransactions = sortedTransactions.filter(transaction => transaction.type === 'Expense');
+        const incomeTransactions = sortedTransactions.filter(transaction => transaction.type === 'Income');
+
+        const groupedExpenses = expenseTransactions.reduce((result, transaction) => {
+          const dateKey = dayjs(transaction.date)
+          result[dateKey] = result[dateKey] || [];
+          result[dateKey].push(transaction);
+          return result;
+        }, {});
+
+        const groupedIncome = incomeTransactions.reduce((result, transaction) => {
+          const dateKey = dayjs(transaction.date)
+          result[dateKey] = result[dateKey] || [];
+          result[dateKey].push(transaction);
+          return result;
+        }, {});
+
+        const expensesArray = Object.values(groupedExpenses);
+        const incomeArray = Object.values(groupedIncome);
+
+        setExpensesArray(expensesArray)
+        setIncomeArray(incomeArray)
       }
     } catch (error) {
       console.error('Error fetching transactions:', error.message);
@@ -266,22 +295,35 @@ export default function Transactions(){
           <div className="flex w-full border-main-2 border-y-4 border-x-2">
             {buttonGroup.map((button, index)=>(
               <button key={index} 
-                className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
+                className={`border-main-2 border-x-2 font-semibold p-2 w-1/2 flex justify-center ${button == selectedGroup ? "bg-main-2 text-contrast" : "bg-contrast text-main-2"}`}
                 onClick={()=>setSelectedGroup(button)}>
                 {button}
               </button>
             ))}
           </div>
         </Card>
-        <Card>
-          {transactions.map((transaction, index) =>(
-            transaction.type == selectedGroup && month == 'All' ?
-            <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
-            :
-            transaction.type == selectedGroup && transaction.date && dayjs(transaction.date).format("MMMM") == month &&
-            <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
-          ))}
-        </Card>
+        {selectedGroup == "Income" &&
+          incomeArray.map((transactions, index) =>(
+            (month === "All"  || dayjs(transactions[0].date).format("MMMM") == month) &&
+            <Card key={index}>
+              <CardTitle>{dayjs(transactions[0].date).format("MMMM D YYYY")}</CardTitle>
+              {transactions.map((transaction, index) =>(
+                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+              ))}
+            </Card>
+          ))
+        }
+        {selectedGroup == "Expense" &&
+          expensesArray.map((transactions, index) =>(
+            (month === "All"  || dayjs(transactions[0].date).format("MMMM") == month) &&
+            <Card key={index}>
+              <CardTitle>{dayjs(transactions[0].date).format("MMMM D YYYY")}</CardTitle>
+              {transactions.map((transaction, index) =>(
+                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+              ))}
+            </Card>
+          ))
+        }
         </div>
       </div>
     </>
