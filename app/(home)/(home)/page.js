@@ -204,11 +204,11 @@ function Transaction({category, notes, amount, type, index, id}){
   )
 }
 
-function Date({date}){
+function Date({children}){
 
   return(
-    <div className="text-white bg-grey rounded-xl text-sm p-2 font-semibold text-center">
-      {date}
+    <div className="text-light-grey bg-dark-grey rounded-xl text-sm m-4 p-2 font-semibold text-center">
+      {children}
     </div>
   )
 }
@@ -305,23 +305,27 @@ export default function Transactions(){
         {selectedGroup == "Income" &&
           incomeArray.map((transactions, index) =>(
             (month === "All"  || dayjs(transactions[0].date).format("MMMM") == month) &&
-            <Card key={index}>
-              <CardTitle>{dayjs(transactions[0].date).format("MMMM D YYYY")}</CardTitle>
-              {transactions.map((transaction, index) =>(
-                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
-              ))}
-            </Card>
+            <div  key={index}>
+              <Date>{dayjs(transactions[0].date).format('MMMM D YYYY')}</Date>
+              <Card>
+                {transactions.map((transaction, index) =>(
+                  <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+                ))}
+              </Card>
+            </div>
           ))
         }
         {selectedGroup == "Expense" &&
           expensesArray.map((transactions, index) =>(
             (month === "All"  || dayjs(transactions[0].date).format("MMMM") == month) &&
-            <Card key={index}>
-              <CardTitle>{dayjs(transactions[0].date).format("MMMM D YYYY")}</CardTitle>
-              {transactions.map((transaction, index) =>(
-                <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
-              ))}
-            </Card>
+            <div key={index}>
+              <Date>{dayjs(transactions[0].date).format('MMMM D YYYY')}</Date>
+              <Card>
+                {transactions.map((transaction, index) =>(
+                  <Transaction key={index} index={index} category={transaction.category} notes={transaction.notes} amount={transaction.amount} type={transaction.type} id={transaction.id}/>
+                ))}
+              </Card>
+            </div>
           ))
         }
         </div>
