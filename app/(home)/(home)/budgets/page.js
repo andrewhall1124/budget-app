@@ -76,7 +76,8 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
   )
 }
 
-function Budget({name, amount, id}){
+function Budget({name, amount, spent, id}){
+  const percentageSpent = (spent / amount) * 100;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -110,17 +111,26 @@ function Budget({name, amount, id}){
 
   return(
     <>
-      <Card>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
-              <MoreVert/>
-            </IconButton>
-            <div className="text-main-2 font-semibold text-xl">{name}</div>
-          </div>
-          <NumberBox color='grey'>{amount}</NumberBox>
+      <div className="pr-2 flex items-center">
+        <div>
+          <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
+            <MoreVert/>
+          </IconButton>
         </div>
-      </Card>
+        <div className="w-full">
+          <div className="flex justify-between">
+            <div className="text-sm font-semibold">{name}</div>
+            <div className="text-sm font-semibold">${Math.round((amount - spent)*100)/100} left</div>
+          </div>
+          <div className="bg-light-grey">
+            <div className={`bg-green-300 h-2 my-1`} style={{ width: `${percentageSpent}%` }}></div>
+          </div>
+          <div className="flex text-sm font-semibold pb-1 gap-1">
+            <div>${Math.round(spent*100)/100}</div>
+            <div className="text-dark-grey">of ${amount}</div>
+          </div>
+        </div>
+      </div>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <Link href={`budgets/edit/${id}`}>
           <MenuItem onClick={handleClose}>
@@ -232,36 +242,23 @@ export default function Budgets(){
             <SelectQuestion value={month} setValue={setMonth} menu={monthMenu}>
               Month
             </SelectQuestion>
-            <div className="flex w-full border-main-2 border-y-4 border-x-2">
-              {buttonGroup.map((button, index) => (
-                <button
-                  key={index}
-                  className={`border-main-2 border-x-2 font-semibold p-2 w-1/3 flex justify-center ${
-                    button === selectedGroup ? 'bg-main-2 text-contrast' : 'bg-contrast text-main-2'
-                  }`}
-                  onClick={() => setSelectedGroup(button)}
-                >
-                  {button}
-                </button>
-              ))}
-            </div>
           </Card>
-          {selectedGroup == "Planned" ?
-            (categories.map((category, index) => (
-              category.date && dayjs(category.date).format("MMMM") == month &&
-                <Budget key={index} name={category.name} amount={category.amountPlanned} id={category.id}/>
-            )))
-            :
-            selectedGroup == "Spent" ?
-            (categories.map((category, index) => (
-              <Budget key={index} name={category.name} amount={category.amountSpent} id={category.id}/>
-              )))
-            :
-            (categories.map((category, index) => (
-              category.date && dayjs(category.date).format("MMMM") == month &&
-              <Budget key={index} name={category.name} amount={(category.amountPlanned - category.amountSpent)} id={category.id}/>
-              )))
-          }
+          <div className="bg-white rounded-xl m-4 py-4 pr-4 pl-2 flex flex-col gap-4">
+            <div className="flex justify-center font-semibold text-main-2 text-lg">Income</div>
+            {categories.map((category, index) => (
+                category.date && dayjs(category.date).format("MMMM") == month &&
+                category.type == "Income" &&
+                  <Budget key={index} name={category.name} amount={category.amountPlanned} spent={category.amountSpent} id={category.id}/>
+            ))}
+          </div>
+          <div className="bg-white rounded-xl m-4 py-4 pr-4 pl-2 flex flex-col gap-4">
+            <div className="flex justify-center font-semibold text-main-2 text-lg">Expense</div>
+            {categories.map((category, index) => (
+                category.date && dayjs(category.date).format("MMMM") == month &&
+                category.type == "Expense" &&
+                  <Budget key={index} name={category.name} amount={category.amountPlanned} spent={category.amountSpent} id={category.id}/>
+            ))}
+          </div>
         </div>
       </div>
     </>

@@ -43,7 +43,7 @@ export default function Edit(){
         <BudgetCard
           nameInit={card.name}
           typeInit={card.type}
-          amountInit={card.amount}
+          amountInit={card.amountPlanned}
           id={id}
           handleClose={handleClose}
         />
