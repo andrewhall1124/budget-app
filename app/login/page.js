@@ -1,34 +1,15 @@
 'use client'
 import Link from "next/link";
-import { Card, CardTitle, TextQuestion, Button } from "@/app/components";
 import { useState } from "react";
-import { supabase } from "@/app/config/supabaseClient";
-import { useRouter } from "next/navigation";
+import Card from "@/components/ui/Card";
+import CardTitle from "@/components/ui/CardTitle";
+import Button from "@/components/ui/Button";
+import TextQuestion from "@/components/ui/TextQuestion";
+import { login } from "@/lib/actions";
 
 export default function Page(){
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const router = useRouter()
-
-  const handleSubmit = async () =>{
-    try{
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      })
-
-      if(error){
-        console.log("Error logging in user:",error)
-      }
-      else{
-        console.log("User logged in successfully:", data)
-        router.push('/')
-      }
-    }
-    catch(error){
-      console.log("Error:",error.message)
-    }
-  }
 
   return(
     <Card>
@@ -40,7 +21,7 @@ export default function Page(){
         Password
       </TextQuestion>
       <div className="flex justify-center">
-        <Button onClick={handleSubmit}>Submit</Button>
+        <Button onClick={() => login(email,password)}>Submit</Button>
       </div>
       <div className="flex justify-center gap-2">
         <div>
