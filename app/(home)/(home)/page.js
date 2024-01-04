@@ -214,31 +214,52 @@ function Date({children}){
 }
 
 export default function Transactions(){
-  const currentDate = dayjs()
   const user_id = useContext(AuthContext).user.id
-  const [month, setMonth] = useState(currentDate.format("MMMM"))
-  const monthMenu = [
-    'All',
-    'November',
-    'December'
-  ]
+  const [month, setMonth] = useState("")
+  const [monthMenu, setMonthMenu] = useState([])
+  const [selectedGroup, setSelectedGroup] = useState("Expense");
+  const [incomeArray, setIncomeArray] = useState([])
+  const [expensesArray, setExpensesArray] = useState([])
 
   const buttonGroup = [
     'Income',
     'Expense'
   ]
 
-  const [selectedGroup, setSelectedGroup] = useState("Expense");
-
-  const [incomeArray, setIncomeArray] = useState([])
-  const [expensesArray, setExpensesArray] = useState([])
-
-
   useEffect(() => {
+    const fetchData = async () =>{
+      await fetchMonths()
+      getTransactions()
+    }
     if(user_id){
-      getTransactions();
+      fetchData()
     }
   }, [user_id]);
+
+  const fetchMonths = async () =>{
+    try{
+      const {data, error} = await supabase.from('budgets').select('date')
+      if(data){
+        const uniqueMonths = new Set();
+        data.forEach(obj => {
+          const date = new dayjs(obj.date);
+          const month = date.format("MMMM")
+          uniqueMonths.add(month);
+        })
+        uniqueMonths.add(dayjs().format("MMMM"))
+        const uniqueMonthsArray = Array.from(uniqueMonths);
+        uniqueMonthsArray.push("All")
+        setMonthMenu(uniqueMonthsArray)
+        setMonth('All')
+      }
+      if(error){
+        console.error(error)
+      }
+    }
+    catch(error){
+      console.error(error)
+    }
+  }
 
   const getTransactions = async () => {
     try {
@@ -249,8 +270,6 @@ export default function Transactions(){
       if (error) {
         console.log(error);
       } else{
-        console.log('Successfuly fetched transactions', data)
-
         const sortedTransactions = data.sort((a, b) => {
           const dateA = dayjs(a.date)
           const dateB = dayjs(b.date)

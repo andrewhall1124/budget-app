@@ -78,6 +78,7 @@ export function BudgetCard({handleClose, nameInit, amountInit, typeInit, id}){
 
 function Budget({name, amount, spent, id}){
   const percentageSpent = (spent / amount) * 100;
+  const amountLeft = Math.round((amount - spent)*100)/100
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -120,11 +121,21 @@ function Budget({name, amount, spent, id}){
         <div className="w-full">
           <div className="flex justify-between">
             <div className="text-sm font-semibold">{name}</div>
-            <div className="text-sm font-semibold">${Math.round((amount - spent)*100)/100} left</div>
+            {amountLeft < 0 ?
+            <div className="text-sm font-semibold">${-amountLeft} over</div>
+            :
+            <div className="text-sm font-semibold">${amountLeft} left</div>
+            }
           </div>
+
           <div className="bg-light-grey">
+            {percentageSpent > 100 ?
+            <div className={`bg-red-300 h-2 my-1`} style={{ width: `100%` }}></div>
+            :
             <div className={`bg-green-300 h-2 my-1`} style={{ width: `${percentageSpent}%` }}></div>
+            }
           </div>
+
           <div className="flex text-sm font-semibold pb-1 gap-1">
             <div>${Math.round(spent*100)/100}</div>
             <div className="text-dark-grey">of ${amount}</div>
@@ -157,66 +168,9 @@ function Budget({name, amount, spent, id}){
 
 export default function Budgets(){
   const user_id = useContext(AuthContext).user.id
-  const currentDate = dayjs()
-  const [month, setMonth] = useState(currentDate.format('MMMM'))
-  const [selectedGroup, setSelectedGroup] = useState("Spent");
-  const [budgets, setBudgets] = useState([])
+  const [month, setMonth] = useState("")
+  const [monthMenu, setMonthMenu] = useState([])
   const [categories, setCategories] = useState([])
-
-  const monthMenu = [
-    'November',
-    'December'
-  ]
-
-  const buttonGroup = [
-    'Planned',
-    'Spent',
-    'Remaining'
-  ]
-
-  useEffect(() => {
-    getData()
-  }, []);
-
-  const getData = async () => {
-    const { data: budgets, budgetError } = await supabase
-      .from('budgets')
-      .select()
-      .eq("user_id", user_id)
-
-    if(budgetError){
-      console.error(budgetError)
-    }
-
-    const selectedMonth = dayjs().month(monthMapping[month])
-    const startDate = selectedMonth.startOf('month')
-    const endDate = selectedMonth.endOf('month')
-    const {data: transactions, transactionError} = await supabase
-      .from('transactions')
-      .select()
-      .eq("user_id", user_id)
-      .gte("date", startDate)
-      .lte("date", endDate)
-
-    if(transactionError){
-      console.error(transactionError)
-    }
-    
-    const categoriesWithTotal = budgets.map(budget => {
-      const amountSpent = transactions
-        .filter(transaction => transaction.category === budget.name)
-        .reduce((acc, transaction) => acc + transaction.amount, 0);
-
-      return {
-        ...budget,
-        amountSpent,
-      };
-    });
-
-    console.log(categoriesWithTotal)
-
-    setCategories(categoriesWithTotal);
-  };
 
   const monthMapping = {
     January: 0,
@@ -233,6 +187,94 @@ export default function Budgets(){
     December: 11,
   };
 
+  useEffect(()=>{
+    fetchMonths()
+  },[])
+
+  useEffect(() => {
+    if(user_id && month){
+      getData()
+    }
+  }, [user_id, month]);
+
+  const fetchMonths = async () =>{
+    try{
+      const {data, error} = await supabase.from('budgets').select('date')
+      if(data){
+        const uniqueMonths = new Set();
+        data.forEach(obj => {
+          const date = new dayjs(obj.date);
+          const month = date.format("MMMM-YY")
+          uniqueMonths.add(month)
+        });
+        uniqueMonths.add(dayjs().format("MMMM-YY"))
+        const uniqueMonthsArray = Array.from(uniqueMonths);
+        setMonthMenu(uniqueMonthsArray)
+        setMonth(dayjs().format("MMMM-YY"))
+      }
+      if(error){
+        console.error(error)
+      }
+    }
+    catch(error){
+      console.error(error)
+    }
+  }
+
+  const getData = async () => {
+    const selectedMonth = monthMapping[month.split("-")[0]]
+    const selectedYear = parseInt('20' + month.split("-")[1])
+    const selectedDate = new Date(selectedYear, selectedMonth, 15)
+    const formattedDate = dayjs(selectedDate.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }));
+    const startDate = formattedDate.startOf('month').format("YYYY-MM-DD")
+    const endDate = formattedDate.endOf('month').format("YYYY-MM-DD")
+
+    const { data: budgets, budgetError } = await supabase
+      .from('budgets')
+      .select()
+      .eq("user_id", user_id)
+      .gte("date", startDate)
+      .lte("date", endDate)
+
+    if(budgetError){
+      console.error(budgetError)
+    }
+
+    const {data: transactions, transactionError} = await supabase
+      .from('transactions')
+      .select()
+      .eq("user_id", user_id)
+      .gte("date", startDate)
+      .lte("date", endDate)
+
+      if(transactionError){
+        console.error(transactionError)
+      }
+      else{
+
+      console.log(transactions)
+      
+      if(transactions){
+        const categoriesWithTotal = budgets.map(budget => {
+          const amountSpent = transactions
+            .filter(transaction => transaction.category === budget.name)
+            .reduce((acc, transaction) => acc + transaction.amount, 0);
+    
+            return {
+              ...budget,
+              amountSpent,
+            };
+          });
+        console.log(categoriesWithTotal)
+        setCategories(categoriesWithTotal);
+      }
+    }
+  };
+
   return(
     <>
     <div>
@@ -246,7 +288,6 @@ export default function Budgets(){
           <div className="bg-white rounded-xl m-4 py-4 pr-4 pl-2 flex flex-col gap-4">
             <div className="flex justify-center font-semibold text-main-2 text-lg">Income</div>
             {categories.map((category, index) => (
-                category.date && dayjs(category.date).format("MMMM") == month &&
                 category.type == "Income" &&
                   <Budget key={index} name={category.name} amount={category.amountPlanned} spent={category.amountSpent} id={category.id}/>
             ))}
@@ -254,7 +295,6 @@ export default function Budgets(){
           <div className="bg-white rounded-xl m-4 py-4 pr-4 pl-2 flex flex-col gap-4">
             <div className="flex justify-center font-semibold text-main-2 text-lg">Expense</div>
             {categories.map((category, index) => (
-                category.date && dayjs(category.date).format("MMMM") == month &&
                 category.type == "Expense" &&
                   <Budget key={index} name={category.name} amount={category.amountPlanned} spent={category.amountSpent} id={category.id}/>
             ))}
